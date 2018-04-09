@@ -1,0 +1,6 @@
+[package]
+name = "TinyMUD"
+version = "0.1.0"
+authors = ["Robert C Jensen <robert.cole.jensen@gmail.com>"]
+
+[dependencies]

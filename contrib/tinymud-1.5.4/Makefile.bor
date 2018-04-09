@@ -1,0 +1,160 @@
+#
+# Whatever you put in for $(CC) must be able to grok ANSI C.
+#
+.AUTODEPEND
+BCCROOT = $(MAKEDIR)\..
+CC = $(BCCROOT)\bin\bcc32
+LD = $(BCCROOT)\bin\ilink32
+WINZIP = C:\apps\Winzip\wzzip
+
+# The suffix appended to executables.  
+# This should be set for Cygwin and Windows.
+EXE = .exe
+#EXE =
+
+# Compiler directives for debugging
+!ifdef DEBUG
+DEBUG_CFLAGS = -v -y -Od -r- 
+DEBUG_LFLAGS = -v 
+!else
+DEBUG_CFLAGS = -v- -O2 
+DEBUG_LFLAGS = -v- 
+!endif
+INCDIRS = -I$(BCCROOT)\include
+
+# Compiler/linker directives for linking static or dynamic
+!ifdef STATIC
+STATIC_CFLAGS =
+LIBS      = import32.lib cw32.lib ws2_32.lib
+!else
+STATIC_CFLAGS = -tWR
+LIBS      = import32.lib cw32i.lib ws2_32.lib
+!endif
+BCC32STARTUP = c0x32.obj
+
+SYSDEFS= -DWIN32 -DWIN32_LEAN_AND_MEAN -D_NO_VCL  
+OPTIM= $(STATIC_CFLAGS) -tWC -w-pia -w-par -w-aus -w-rch $(DEBUG_CFLAGS) -$(PROCESSOR_LEVEL) 
+#
+# To log failed commands (HUH's) to stderr, include -DLOG_FAILED_COMMANDS
+# To restrict object-creating commands to users with the BUILDER bit,
+#   include -DRESTRICTED_BUILDING
+# To log all commands, include -DLOG_COMMANDS
+# To force fork_and_dump() to use vfork() instead of fork(), include
+#   -DUSE_VFORK.
+# To force grow_database() to be clever about its memory management,
+#   include -DDB_DOUBLING.  Use this only if your realloc does not allocate
+#   in powers of 2 (if you already have a clever realloc, this option will
+#   only cost you extra space).
+# By default, db.c initially allocates enough space for 10000 objects, then
+#   grows the space if needed.  To change this value, include
+#   -DDB_INITIAL_SIZE=xxxx where xxxx is the new value (minimum 1).
+# To include code for keeping track of the number of blocks allocated,
+#   include -DTEST_MALLOC.
+# To include code which attempts to compress string data, include -DCOMPRESS.
+# To eliminate the message third parties see when a player whispers, include
+#   -DQUIET_WHISPER.
+# To include Stephen White's gender flags and pronoun substitution code,
+#   include -DGENDER.
+# To give set (!)WIZARD and extended WHO privs only to id #1,
+#   include -DGOD_PRIV.  When this option is set, two other options
+#   become meanigful
+#       -DGOD_MODE              Restricts host names some commands to #1
+#       -DGOD_ONLY_PCREATE      Restricts @pcreate to player #1
+# To have logs and WHO use hostnames instead of addresses, include
+#   -DHOST_NAME.
+# To have messages for connect and disconnect, include -DCONNECT_MESSAGES.
+# To use a hashed player list for player name lookups,
+#   include -DPLAYER_LIST.
+# To disable login-time creation of players, include -DREGISTRATION.
+#    see GOD_ONLY_PCREATE above.
+# To cause netmud to detach itself from the terminal on startup, include
+#   -DDETACH.  The log file appears on LOG_FILE, set in config.h.
+# To add the @count & @recycle command, include -DRECYCLE
+# To disable core dump on errors, include -DNODUMPCORE
+# To add the ROBOT flag (allowing robots to be excluded from some rooms
+#   at each player's request), include -DROBOT_MODE
+# To use Tinker instead of Wizard, Bobble instead of Toad, and
+#    donate instead of sacrifice, include -DTINKER
+# To prevent users from using confusing names
+#   (currently A, An, The, You, Your, Going, Huh?), include -DNOFAKES
+# To include code for marking all things with a timestamp/usecnt,
+#   include -DTIMESTAMPS
+#
+# To Use Islandia values in config.h, include -DISLANDIA
+# To Use TinyHELL values in config.h, include -DTINYHELL
+
+#DEFS= $(SYSDEFS) -DGOD_PRIV -DCOMPRESS -DQUIET_WHISPER -DGENDER -DHOST_NAME \
+#      -DCONNECT_MESSAGES -DPLAYER_LIST -DDETACH -DREGISTRATION \
+#      -DGOD_ONLY_PCREATE -DROBOT_MODE -DRECYCLE -DNOFAKES \
+#      -DTINYHELL
+
+DEFS= $(SYSDEFS) -DGOD_PRIV -DCOMPRESS -DQUIET_WHISPER -DGENDER -DHOST_NAME \
+	-DCONNECT_MESSAGES -DPLAYER_LIST -DROBOT_MODE \
+	-DRECYCLE -DTINKER -DNOFAKES -DTIMESTAMPS
+
+CFLAGS= $(OPTIM) $(DEFS)
+LFLAGS = -Tpe -ap -c -Gn $(DEBUG_LFLAGS) 
+INCS = -I. $(INCDIRS)
+
+# Everything needed to use db.c
+DBFILES= db.c compress.c player_list.c stringutil.c
+# .obj versions of above
+DBOFILES= $(DBFILES:.c=.obj)
+
+# Everything except interface.c --- allows for multiple interfaces
+CFILES= create.c game.c help.c look.c match.c move.c player.c predicates.c \
+	rob.c set.c speech.c utils.c wiz.c \
+	boolexp.c unparse.c os.c $(DBFILES)
+
+# .o versions of above
+OFILES= create.obj game.obj help.obj look.obj match.obj move.obj player.obj \
+	predicates.obj rob.obj set.obj speech.obj utils.obj wiz.obj boolexp.obj \
+	unparse.obj os.obj $(DBOFILES)
+
+# Files in the standard distribution
+DISTFILES= $(CFILES) config.h db.h externs.h interface.h match.h \
+	interface.c sanity-check.c extract.c dump.c decompress.c \
+	help.txt small.db minimal.db restart-cmu do_gripes \
+	restart-day restart-night tiny.docs tinymud.ps tinymud.tex \
+	README small.db.README \
+	CHANGES copyright.h \
+	Makefile Makefile.bor Makefile.dgm Makefile.vc Makefile.lcc \
+	CHANGELOG os.h INSTALL_NOTES
+
+!ifndef RELEASE
+RELEASE=dist
+!endif
+
+OUTFILES= netmud$(EXE) dump$(EXE) decompress$(EXE) sanity-check$(EXE) \
+	extract$(EXE) 
+
+all: $(OUTFILES)
+
+netmud$(EXE): interface.obj $(OFILES)
+	$(LD) $(LFLAGS) $(BCC32STARTUP) $**, $<,, $(LIBS) 
+
+dump$(EXE): dump.obj unparse.obj $(DBOFILES)
+	$(LD) $(LFLAGS) $(BCC32STARTUP) $**, $<,, $(LIBS) 
+
+sanity-check$(EXE): sanity-check.obj utils.obj $(DBOFILES)
+	$(LD) $(LFLAGS) $(BCC32STARTUP) $**, $<,, $(LIBS) 
+
+extract$(EXE): extract.obj utils.obj $(DBOFILES)
+	$(LD) $(LFLAGS) $(BCC32STARTUP) $**, $<,, $(LIBS) 
+
+decompress$(EXE): decompress.obj compress.obj
+	$(LD) $(LFLAGS) $(BCC32STARTUP) $**, $<,, $(LIBS) 
+
+clean:
+	-@del *.obj *.tds *.map $(OUTFILES) 2>NUL
+
+dist : $(DISTFILES)
+	@echo "Building distribution..."
+	@-md tinymud-1.5.4
+	@&copy /y $** tinymud-1.5.4 1>NUL
+	@$(WINZIP) -Pr tinymud-1.5.4-$(RELEASE).zip tinymud-1.5.4 1>NUL 2>NUL
+	@rd /s /q tinymud-1.5.4
+	@echo "Done."
+
+.c.obj:
+	$(CC) $(CFLAGS) $(INCS) -c -n$(@D) $<

@@ -1,0 +1,701 @@
+This set of docs is tailored for Chaos, which is running TinyMUCK2.1.1.
+Generally, though, these commands hold true for any mud.     
+	
+COMMANDS: drop, examine, get, give, go, gripe, help, inventory, kill, look, 
+news, OUPUTPREFIX, OUTPUTSUFFIX, page, QUIT, rob, say, score, whisper, WHO,
+@action, @attach, @boot, @chown, @create, @describe, @dump, @dig, @drop, @dump,
+@fail, @find, @force, @link, @lock, @name, @newpassword, @odrop, @ofail, @open,
+@osuccess, @password, @pcreate, @prog, @recycle, @set, @shutdown, @stats, 
+@success, @teleport, @toad, @unlink, @unlock, @wall
+
+TOPICS: being killed, custom commands, control, costs, dropping, drop-tos,
+failure, flags (wizard, sticky, link_ok, dark, temple, haven, chown_ok,
+abode, jump_ok, mucker, builder), gender, goal, here, homes, me, money,
+robbery, sacrificing, strings, substitutions, success, types, actions,
+linking, meta-links, properties, muf.
+
+drop <object>.	Drops the <object> if you are holding it. It moves the object
+		to the room you are in, unless its STICKY flag is set (See
+		STICKY), or the room has a drop-to (See DROP-TOS). 
+		Dropping a thing in a room with the TEMPLE flag set
+		sacrifices it (See SACRIFICING).  Unlinked exits can only
+		be dropped in rooms you control (See CONTROL).
+		'throw' is the same as 'drop'.
+
+examine [object]. Displays all available information about <object>. <object>
+		can be specified as <name> or #<number>, or as 'me' or 'here'.
+		You must control (See CONTROL) the object to examine it. If
+		you do not control the object, you will just be shown the
+		owner of the object and its description.
+		Wizards can examine objects in other rooms using #<number>
+		or *<player>.
+
+get <object>.	Picks up <object> if it is in the same room as you, and if
+		it is not locked (See @lock). <object> can be a thing or an
+		unlinked exit.
+		'take' is the same as 'get'.
+
+give <player>=<pennies>. Gives <player> the specified number of pennies. The
+		only thing you can give is pennies. You can't give someone
+		pennies if their new total would be greater than 10000.
+		Wizards can give as many pennies as they wish, even negative
+		amounts, without affecting their own supply, and can give
+		pennies to things to change their sacrifice values.
+
+go[to] <direction>; go[to] home.
+		Goes in the specified direction. 'go home' is a special
+		command that returns you to your home (See HOMES). The word
+		'go' may be omitted. (You can 'go east', or simply 'east').
+		'move' is the same as 'go'.
+
+gripe <message>. Sends <message> to the system maintainer.
+
+help.		This displays a short help message.
+
+inventory.	Lists what you are carrying. This can usually be abbreviated
+		to inv.
+
+kill <player> [=<cost>]. Attempts to kill <player>. Killing costs either
+		<cost> or 10 pennies, whichever is greater. The probability
+		of success is <cost> percent. Spending 100 pennies always
+		works (except against Wizards, who can never be killed).
+		Killing a player sends them to their home (See HOMES), just
+		as the command 'go home' would (See go). It also gives the
+		killed player 50 pennies.
+		Players cannot be killed in rooms which have the HAVEN flag
+		set (see HAVEN).
+
+look [object].	Displays the description of <object>, or the room you're in 
+		if you don't specify one. <object> can be a thing, player,
+		exit, or room, specified as <name> or #<number> or 'me' or
+		'here'. Wizards can look at objects in other rooms using
+		#<number> or *<player>.
+		'read' is the same as 'look'.
+
+news.		Displays the current news file for the game. Must be typed
+		in full.
+
+OUTPUTPREFIX [string]. Must be in all capitals, and must be typed in full.
+		This prints the given string before the output of every
+		command. 
+
+OUTPUTSUFFIX [string]. Must be in all capitals, and must be typed in full.
+		This prints the given string after the output of every
+		command.
+
+page <player> [=<message>]. This tells a player that you are looking for them.
+		They will get a message telling them your name and location.
+		This costs 1 penny. If you include the '=<message>', it will
+		tell the player your name and your message, along with your
+		location. This will not work if the player you're trying to
+		page is not connected.  If a player has the HAVEN flag set
+		(See HAVEN), you cannot page them, and they will not be
+		notified that you tried.
+
+pose <action>.  The normal abbreviation for this is ':<message>'. This is used
+		for actions, ex. if your name was Igor, and you typed ':falls
+		down.', everyone would see "Igor falls down." (See also
+		whisper).
+
+QUIT.		This command logs you out of the game. Must be in all capitals.
+
+rob <player>.	Attempts to steal one penny from <player>. The only thing
+		you can rob are pennies. Being robbed can be prevented (See
+		ROBBING).
+
+say <message>.	Says <message> out loud. You can also use '"<message>'.
+
+score.		Displays how many pennies you are carrying.
+
+whisper <player>=<message>. Whispers <message> to <player>, if they are in
+		the same room as you. No one else can see the message.
+		Wizards can whisper *<player>=<message> to whisper to
+		players in other rooms. This command will not work if
+		the player you are trying to whisper to is not connected.
+
+WHO [<player>].	List the name of every player currently logged in, and how
+		long they have been inactive. If given a player name, it
+		displays only that name and idle time. Must be in all
+		capitals.
+
+@action <name>[=<object>]. This sets up an action and attaches it to the
+		thing, room, or player specified. '@action' alone
+		will create an action and you can then use '@attach' to
+		attach it to something (See @attach, ACTIONS). 
+
+@attach <name>=<object>. Attaches the named action to <object>. 
+
+@boot <player>.	Disconnects the player from the game. Only Wizards can use
+		this command.
+
+@chown <object>[=<player>]. Changes the ownership of <object> to <player>.
+		Normally, only wizards may use this command. However,
+		if the object is set CHOWN_OK (see CHOWN_OK), players 
+		can chown it to themselves with 'chown <object>' if they
+		pick the object up. Players can't be @chowned; they always 
+		own themselves.
+
+@create <name> [=<cost>]. Creates a thing with the specified name. Creation
+		costs either <cost> pennies or 10 pennies, whichever is
+		greater. The value of a thing is proportional to its cost.
+		To be exact, value=(cost/5)-1.
+
+@describe <object> [=<description>]. <object> can be a thing, player, exit, or
+		room, specified as <name> or #<number> or 'me' or 'here'.
+		This sets the description a player sees when they use the
+		command 'look <object>'. Without a description argument, it
+		clears the message. 
+		It can be abbreviated @desc.
+
+@dig <name>.	Creates a new room with the specified name and displays its
+		number. This costs 10 pennies.
+
+@drop <object>[=<message>]. Sets the drop message on <object>.  <object>
+		can be specified as <name> or #<number> or 'me' or 'here'.
+		The drop message on a thing is displayed when the
+		thing is dropped. The drop message on an exit is displayed
+		when the player first enters the destination room. The drop
+		message on a player tells whoever killed them how they died.
+		Without a message argument, it clears the message. (See
+		@odrop).
+
+@dump.		Only Wizards may use this command. Saves the database from
+		memory to disk. Automatically occurs every hour, and when
+		@shutdown is used.
+
+@fail <object> [=<message>]. <object> can be a thing, player, exit, or room,
+		specified as <name> or #<number> or 'me' or 'here'. Sets the
+		fail message for <object>. The message is displayed when a
+		player fails to use <object> (See FAILURE). Without a
+		message argument, it clears the message. (See @ofail).
+
+@find [name].	Displays the name and number of every room, thing, or player
+		that you control whose name matches <name>. Because the
+		command is computationally expensive, this costs 1 penny
+		or more, depending on the MUD.
+
+@force <player>=<command>. Only Wizards may use this command. Forces <player>
+		to do <command>.
+
+@link <object>=<number>; @link <object>=here; @link <dir>|<room>=home. Links
+		<object> to room specified by <number>. For things and 
+		players, it sets their home room (See HOMES). For rooms, it
+		sets the drop-to room (See DROP-TOS). To link to a room,
+		you must control it, or it must be set LINK_OK (for exits),
+		or ABODE (for things, players, and rooms). (See LINK_OK and
+		ABODE). Linking costs 1 penny. If someone else owned the
+		exit, their penny is reimbursed. You can link exits to any
+		object, if you own it or it is set LINK_OK. (See LINKING,
+		HOMES, DROP-TOS).
+		Wizards can @link objects in other rooms using #<number>
+		or *<player>.
+
+@lock <object>=<key>. Locks <object> to a specific key(s). <object> can be
+		specified as <name> or #<number>, or as 'me' or 'here'.
+		Boolean expressions are allowed, using '&' (and), '|' (or),
+		'!' (not), and parentheses ('(' and ')') for grouping. To
+		lock to a player, prefix their name with '*' (ex. '*Igor').
+		You can lock to a program, in the same manner as locking to
+		an object (by name or number). You can also lock to a property,
+		with '@lock <exit>=<property>:<type>'. For example, to lock
+		a door to anyone that is male, you '@lock <exit>=sex:male'.
+		Notice that this will allow anyone carrying a male object to
+		pass the exit as well.
+
+@name <object>=<new name> [<password>]. Changes the name of <object>. <object>
+		can be a thing, player, exit, or room, specified as <name>
+		or #<number> or 'me' or 'here'. For a player, it requires
+		the player's password.
+
+@newpassword <player>=<password>. Only Wizards may use this command. Changes
+		<player>'s password, informing <player> that you changed it.
+		Must be typed in full.
+
+@odrop <object>[=<message>]. Sets the odrop message on <object>.  <object>
+		can be specified as <name> or #<number> or 'me' or 'here'.
+		The odrop message on a thing is displayed to everyone
+		else in the room whenthe thing is dropped. The odrop message
+		on an exit is displayed to everyone else in the room when the
+		player first enters the destination room. The odrop message
+		on a player tells everyone else how they died if they are
+		killed. Without a message argument, it clears the message.
+		(See @drop).
+
+@ofail <object>[=<message>]. Sets the ofail message on <object>. <object> 
+		can be specified as <name> or #<number>, or as 'me' or 'here'.
+		The ofail message, prefixed by the player's name, is shown 
+		to others when the player fails to use <object>. Without a
+		message argument, it clears the message.
+		(See @fail, FAILURE).
+
+@open <dir>[;<other dir>]* [=<number>]. Creates an exit in the specified
+		direction(s). If <number> is specified, it is linked to that
+		room. Otherwise, it is created unlinked. You or anyone else
+		may use the '@link' command to specify where the unlinked
+		exit leads. Opening an exit costs 1 penny. If you specify
+		<number>, linking costs 1 more penny.
+
+@osuccess <object>[=<message>]. Sets the osuccess message on <object>.
+		<object> can be specified as <name> or #<number>, or as
+		'me' or 'here'. The osuccess message, prefixed by the
+		player's name, is shown to others when the player
+		successfully uses <object>.  Without a message argument, it
+		clears the message. It can be abbreviated @osucc. 
+		(See @success, SUCCESS).
+
+@password <old password>=<new password>. This changes your password.
+
+@pcreate <name>. On muds with registration, this is a Wizard-only command
+		that creates a character with the given name.
+
+@prog. 		See the MUF programmer's manual.
+
+@recycle <object>. This recycles the <object>. <object> can be a thing, 
+		room, or exit, but not a player. It changes the object
+		to a garbage object, and its number and space are reused
+		later.
+	
+@set <object>=<flag>; @set <object>=!<flag>. Sets (or, with '!', unsets) <flag>
+		on <object>. @set can also be used to set properties,
+		with '@set <object>=<property>:[type]' or '@set <object>=:' to
+		unset all properties. (See FLAGS, PROPERTIES). 
+
+@shutdown.	Only Wizards may use this command. Shuts down the game. Must
+		be typed in full.
+
+@stats [player]. Display the number of objects in the game. For Wizards, also
+		lists a breakdown by object types. Wizards can supply a player
+		name to count only objects owned by that player.
+
+@success <object> [=<message>]. Sets the success message for <object>.
+		<object> can be specified as <name> or #<number>, or as 'me'
+		or 'here'. The success message is displayed when a player
+		successfully uses <object>. Without a message argument,
+		it clears the message.  It can be abbreviated @succ.
+		(See @osuccess, USING OBJECTS).
+
+@teleport [<object>=] <room>. Teleports <object> to <room>. <object> must be a
+		thing. (Wizards can also teleport players.) You must be able
+		to link to the destination, and either control (See CONTROL)
+		the object or its current location. You can only teleport 
+		objects into a room, not into someone's inventory, unless you
+		are a Wizard. If the destination room has a drop-to, <object>
+		will go to the drop-to room instead.  
+
+@toad <player>. Only Wizards may use this command. Turns the player into a
+		slimy toad, destroying their character. Must be typed in full.  
+
+@unlink <dir>; @unlink here. Removes the link on the exit in the specified
+		direction, or removes the drop-to on the room. Unlinked exits
+		may be picked up and dropped elsewhere. Be careful, anyone
+		can relink an unlinked exit, becoming its new owner (but you 
+		will be reimbursed your 1 penny). (See @link).
+
+@unlock <object>. Removes the lock on <object>. (See @lock).
+
+@wall <message>. Only Wizards may use this command. Shouts something to every
+		player connected. Must be typed in full.
+
+BEING KILLED:
+Getting killed is no big deal. If you are killed, you return to your home, and
+all things you carry return to their homes. You also collect 50 pennies in
+insurance money (unless you have >= 10000 pennies). See MONEY.
+
+CUSTOM COMMANDS:
+Custom commands can be made one of two ways. You can either use exits, or use
+programs. 
+Using an exit: For example, to make a 'sit' command, one could "@open sit",
+then "@link sit=here" (because unlinked exits can be stolen),
+"@lock sit=me&!me" (impossible to be both at once, therefore always fails),
+and "@fail sit=You sit on the chair."; "@ofail sit=sits on the chair.".
+Since nobody can go through it, it always fails. The @fail message is displayed
+to the player, and the @ofail message (preceded by the player's name) to
+everyone else. 
+Using a program: you'd create a MUF program on an appropriate object, like
+a 'sit' program on a chair. (See MUF).
+
+CONTROL:
+There are 3 rules to controlling objects: 1) You control anything you own. 2) A
+wizard controls everything. 3) Anybody controls an unlinked exit, even if it is
+locked. Builders should beware of 3, lest their exits be linked or stolen.
+(In other words, never leave unlinked exits lying around unless you *want* 
+someone to get them).
+
+COSTS:
+kill: 10p (or more, up to 100p).
+page: 1p.
+@create: 10p (or more, up to 505p), sacrifice value=(cost/5)-1.
+@dig: 10p.
+@find: 1p (or more, depending on the MUD).
+@link: 1p (if you didn't already own it, +1p to the previous owner).
+@open: 1p (2p if linked at the same time). 
+
+DROPPING:
+You see the drop and odrop message on a thing when you drop it. You see
+the drop and odrop messages on an exit when you go through it. You see the
+drop and odrop messages on a person when you kill them. Drop and odrop
+messages have no meaning for rooms.
+
+DROP-TOs:
+When the @link command is used on a room, it sets a drop-to location. Any
+object dropped in the room (if it isn't STICKY) will go to that location. If
+the room is STICKY, the drop-to will be delayed until the last person in the
+room has left.
+
+FAILURE:
+You fail to use a thing when you cannot take it (because its lock fails). You
+fail to use an exit when you cannot go through it (because it's unlinked or
+locked). You fail to use a person when you fail to rob them. You fail to use a
+room when you fail to look around (because it's locked). 
+
+FLAGS:
+The flags are displayed as letters following an object's ID number. Flags are
+set with the @set command. The general flags are: W(izard), S(ticky),
+L(ink_OK), D(ark), T(emple), H(aven), C(hown_OK), A(bode), J(ump_OK), 
+M(ucker), and B(uilder).
+See individual flag names.
+
+WIZARD:
+If a person is WIZARD, they are unkillable, subject to fewer restrictions,
+and able to use wizard commands. It is only meaningful for players. Only
+wizard #1 can set and unset this flag. In general, WIZARDs can do anything
+using #<number> or *<player>. No Wizard can turn their own WIZARD flag off.
+
+STICKY:
+If a thing is STICKY, it goes home when dropped (See HOMES). If a room is
+STICKY, its drop-to is delayed until the last person leaves (See DROP-TOS).
+If an action/exit is STICKY, and it is attached to an object, the object
+stays there when the action/exit is triggered. (See LINKING).
+Not meaningful for players.
+
+LINK_OK:
+If something is LINK_OK, anyone can link actions or exits to it (but still
+not from it).  (See @link, LINKING).
+
+DARK:
+If a room is DARK, then when people besides the owner 'look' there, they only
+see things they own. If a thing or player is DARK, then "look" does not list
+that object in the room's Contents:. Only wizards can set players dark. 
+
+TEMPLE:
+If a room is TEMPLE, you can sacrifice things for pennies by dropping them
+there. It has no meaning for players, things, or exits. Only wizards can set
+this flag.
+
+CHOWN_OK:
+If a thing is set CHOWN_OK, anyone can chown the object to themselves with 
+"@chown <thing>". They must pick up the object to do this.
+
+GENDER:
+@set me=sex:male|female|neuter. Default unassigned. If a player's gender
+is set, %-substitutions will use the appropriate pronoun for that player. Only
+meaningful for players. See SUBSTITUTIONS.
+
+HAVEN:
+@set here=haven;@set me=haven. If a room is HAVEN, you cannot kill in that 
+room. If a player is set HAVEN, he cannot be paged.
+
+ABODE:
+@set here=abode. If a room is set ABODE, players can set their homes there, 
+and can set the homes of objects there. (LINK_OK is now used only for exits,
+and ABODE is for players and objects.)
+
+JUMP_OK:
+@set <object>=jump_ok. If a room is set JUMP_OK, programs can move people
+into it. If a player is set JUMP_OK, actions/exits linked to that player
+will work (otherwise, they'll fail.) There are several other rules dealing
+with JUMP_OK, but they all refer to restrictions on MUF programs. See the
+MUF documentation for more details.
+
+BUILDER:
+If this flag is in effect, only people who are set BUILDER can create
+things. Only Wizards can set this flag. (This flag is not currently in use
+on _Chaos_).
+
+MUCKER:
+This can only be set by Wizards. This flag allows players to enter @prog
+mode, and program in MUF. (See MUF).
+
+GOAL:
+There isn't one, except to have fun. If you're not having fun, quit. Have fun.
+
+HERE:
+The word 'here' refers to the room you are in. For example, to rename the room
+you're in (if you control it), you could enter "@name here=<new name>".
+
+HOMES:
+Every thing or player has a home. This is where things go when sacrificed,
+players when they go home, or things with the STICKY flag set go when dropped
+(See STICKY). Homes are set with the @link command. A thing's home defaults to
+the room where it was created, if you control that room, or your home. You can
+link an exit to send players home (with their inventory) by "@link <dir>=home".
+Drop-tos can also be set to 'home' (See DROP-TOS, @link).
+
+ME:
+The word 'me' refers to yourself. Some things to do when starting out: 1) give
+yourself a description with "@describe me=<description>", then look at yourself
+with "look me". 2) prevent anyone else from robbing you with "@lock me=me". 3)
+set your gender, if you wish it known, with "@set me=sex:male" or
+"@set me=sex:female" (or "@set me=sex:neuter" to be an 'it'). 
+
+MONEY:
+Building and some other actions cost money. How to get money: 1) find pennies.
+2) sacrifice (drop) things in the temple. 3) get killed. 4) be given money. 5)
+rob someone. Once you reach 10000 pennies, it becomes difficult to acquire
+more. (See COSTS and SACRIFICING).
+Wizards don't need money to do anything.
+
+ROBBERY:
+When you rob someone, you succeed or fail to use them (See SUCCESS and
+FAILURE). You can protect yourself from being robbed by entering "@lock me=me"
+(See ME, and, @lock). If you lock yourself to yourself, you
+can rob yourself and set off your @success and @osuccess messages. Try
+entering "@osucc me=is goofy." and robbing yourself in a crowd. (See rob).
+
+SACRIFICING:
+You sacrifice a thing by dropping it in the temple. Sacrificing an object
+gives you the value of an object. You can't sacrifice something you own.
+If you have >= 10000 pennies, all sacrifices are worth only 1 penny. The 
+sacrifice value of a thing is set at creation by "@create frob=cost", by 
+the formula value=(cost/5)-1. Only a wizard can change the value of an 
+object, once created.
+
+STRINGS:
+Objects have 8 strings: 1) a name. 2) a description. 3) a success message
+(seen by the player). 4) a fail message (seen by the player). 5) an 
+osuccess message (seen by others). 6) an ofail message (seen by others).
+7) a drop message (seen by the player). 8) a odrop message (seen by others).
+
+SUBSTITUTIONS:
+@osuccess and @ofail messages may contain %-substitutions, which evaluate to
+gender-specific pronouns if the player's gender is set. They are: %s
+(subjective) = Name, he, she, it. %o (objective) = Name, him, her, it. %p
+(possessive) = Name's, his, her, its. %n (player's name) = Name. If you need a 
+'%', use %%. Ex. '@ofail teapot=burns %p hand on the hot teapot.' (See GENDER).
+You can also custom set your own substitutions. For example, '@set me=%o:hir',
+will cause 'hir' to be substituted for %o instead of him, her, or it.
+
+SUCCESS:
+You successfully use an object when you take it. You use an exit successfully
+when you go through it. You successfully use a person successfully when you
+successfully rob them. You successfully use a room when you look around.
+
+TYPES:
+There are 4 types of objects: things, players, exits, and rooms. The first
+letter following an object's ID number indicates the type: P(layer), E(xit),
+R(oom), otherwise, thing. Things are inanimate objects that can be carried.
+Players are animate objects that can move and carry. Exits are the means by
+which objects move. Rooms are locations that contain objects and linked 
+exits. (Mind you, MUF programming can write its own rules. You can have
+mobile rooms (vehicles) and containers easily.)
+
+ACTIONS:
+Actions are similar to exits, as you can '@link' them to things, and they can
+then take you places, or bring things to you. Actions can thus be thought of
+as moveable exits, as they move with the thing or player that they are attached
+to. Actions will always work in the owner's rooms and in rooms with the JUMP_OK
+flag (See JUMP_OK) set. Actions attached to a thing always work whenever the 
+thing is in the room. Actions attached to a player can only work for the player
+that owns them.
+
+LINKING:
+ You can link to something if you control it, or if it is set LINK_OK (or
+ABODE). Being able to link means you can set the homes of objects or yourself
+to a room if it is set ABODE, and can set the destination of exits to a room 
+if it is LINK_OK. (See LINK_OK and ABODE, and @link).
+ Linking an action/exit to an object means that a successful activation of the
+exit will bring the object to you, if the action/exit is attached to you or to
+the room you're in. If that object is with another player, then it disappears
+from their inventory and is brought to you (either to your inventory, if the
+action/exit is attached to you, or to your room, if it is attached to the
+room).  If the action/exit is attached to a thing, that thing will go home
+when the action/exit is triggered, unless the action/exit's STICKY flag is
+set (See STICKY). In that case, it summons the thing it's linked to as normal.
+For example: a sticky exit 'press button' attached to a 'candy machine', linked
+to a 'candy bar', summons the candy bar into the room. a 'eat candy' exit 
+attached to the 'candy bar', linked to a 'half-eaten candy bar', will summon
+the 'half-eaten candy bar' and remove the 'candy bar'.
+ Linking an action/exit to a player means that a successful activation of the
+exit will bring you to the player, if the player has their JUMP_OK flag set.
+ Linking an action/exit to a program allows you to use that program. (without
+carrying it around with you).
+ Linking an action/exit to other actions/exits is a meta-link. (See META-LINKS).
+
+META-LINKS:
+When a meta-link is triggered, all the exits that it was linked to will be 
+triggered at the same time. As a result, all of those exits will occur, moving
+objects around or many other things. It will not move players to rooms however.
+For example, if action/exit 'a' is linked to thing #123, when 'a' is 
+triggered, it summons thing #123. If 'b' is linked to thing #456, when 'b'
+is triggered, it summons thing #456. If 'c' is linked to both 'a' and 'b',
+(with "@link c=a;b"), when 'c' is triggered, *both* 'a' and 'b' will be
+triggered, summoning #123 and #456 at the same time.
+
+PROPERTIES:
+Property lists (p-lists) are an extension to flags. Each object will have a
+p-list that can be checked against in locks and such. p-lists can be anything.
+To unset properties use "@set thing=property:". To remove all properties use 
+"@set thing=:". 
+
+MUF:
+MUF is a FORTH-derived language, in which programs can be written by players
+with the MUCKER flag. Type 'man' to see a terse summary of MUF commands,
+or you can ftp the docs from belch.berkeley.edu, in the directory pub/tinymuck.
+
+Examples
+--------
+
+Igor is a new player. He sets his description by typing:
+   @desc me=Igor is a ferret with an evil glint in his eye.
+He has guarded himself from being robbed, and set some fail messages on 
+himself that people will see when they try to rob him. He typed:
+   @lock me=me
+   @fail me=Igor chomps you on the knee with his little sharp teeth.
+   @ofail me=howls in pain as Igor bites them.
+Now, here is what happens if Murf tries to rob Igor:
+   Murf types:   rob igor
+   Murf sees:    Igor chomps you on the knee with his little sharp teeth.
+   all else see: Murf howls in pain as Igor bites them.
+'them' as a pronoun isn't to specific, and so Igor should do this:
+   @ofail me=howls in pain as Igor bites %o.
+So if Murf robs Igor, this is what everyone else will see:
+   Murf howls in pain as Igor bites him.
+This is assuming that Murf did a '@set me=sex:male'. If not, it would have
+printed:
+   Murf howls in pain as Igor bites Murf.
+
+Igor wants to set a message that he will use a lot, so he sets his @osucc:
+   @osucc me=runs around the room nipping at everyone's heels.
+Now, if he wants to display that message:
+   Igor types:   rob me
+   Igor sees:    You stole a penny.
+	         Igor stole one of your pennies!
+   all else see: Igor runs around the room nipping at everyone's heels.
+
+Igor wants to make an object called 'Ferret chow'. He types:
+   @create Ferret Chow
+   @desc Ferret Chow=This is a big bag full of yummy ferret chow. 
+   @succ Ferret Chow=You tear into the end of the bag, stuffing yourself.
+   @osucc Ferret Chow=tears into the Ferret Chow bag, eating greedily.
+Now Igor decides that he wants to be the only one who can pick up the bag.
+   @lock Ferret Chow=me
+   @fail Ferret Chow=It's icky Ferret Chow. It would probably taste gross.
+   @ofail Ferret Chow=decides Ferret Chow is icky.
+If Igor picks up the bag:
+   Igor types:   get Ferret Chow 
+   Igor sees:    You tear into the end of the bag, stuffing yourself.
+   all else see: Igor tears into the Ferret Chow bag, eating greedily.
+Igor is now carrying the bag. He must drop it if he wants to see the messages
+again.  If Murf picks up the bag:
+   Murf types:   get Ferret Chow
+   Murf sees:    It's icky Ferret Chow. It would probably taste gross.
+   all else see: Murf decides Ferret Chow is icky.
+Because the bag was locked to Igor, Murf cannot get the bag.
+
+Igor wants to build a few rooms. He can only build off of a place where he
+can get a link. He needs to ask around to find one of these if he is just
+starting to build. Murf is going to give Igor a link named 'n;north'. That
+means that both 'n' and 'north' activate that exit. Igor digs a room, and
+links the exit to it. He types:
+   @dig Igor's House
+At this point, the program will respond "Igor's House created with room number 
+xxxx". We'll pretend it gave the room number as 1234.
+   @link n;north=1234
+The program will respond with "Linked." Now Igor sets a few messages on the
+exit. He types:
+   @desc n=North is Igor's House.
+   @succ n=You crawl into Igor's House.
+   @osucc n=crawls into Igor's House.
+These messages work just the same way they work on object, like the Ferret Chow.
+Next, Igor goes in the room, and creates an out exit. Murf has been nice enough
+to not only give Igor the n;north exit, but to set his room to L(ink_ok). Murf's
+room number is 623.  Igor types 'n' or 'north' to go in the room, then types:
+   @open out;back;s;south=623
+The program will respond with "Opened. Trying to link... Linked." Igor now
+has a south exit back to Murf's room. Murf can now set his room to !link_ok,
+so no one else can link to it. Igor puts some messages on the south link as
+well. He decides he wants to describe the room, so he types:
+   @desc here=This is Igor's home. It is a small room, lined with paper shreds.
+   Over in the corner is a small hole.
+Now Igor wants to dig a small room that the hole connects to. He types:
+   @dig Igor's Hidden Room
+The program tells him that the room is number 1250. He then types:
+   @open hole=1250
+   @lock hole=me
+   @desc hole=This is a small hole, just the size of Igor.
+   @fail hole=You can't fit.
+   @ofail hole=can't fit through the hole.
+   @succ hole=You slip into the hole.
+   @osucc hole=slips into the hole.
+This creates and links the exit called 'hole' to Igor's Hidden Room. He locks
+the exit to him, so only he can go through the exit. When he uses the exit,
+the success and osuccess messages will be displayed. When someone else tries to
+use the exit, the fail and ofail messages will be displayed. Since Igor owned
+the room that he was linking from, he had to use @open to create the link first.
+He now types 'hole' to go in the room, and types '@open out=1234' to create
+and link an exit called 'out' that leads to his House. 
+If Igor wants everyone BUT Murf to be able to go 'hole', he types:
+   @lock hole=!*murf
+This locks the hole against the player Murf. If he wants a person to be able to
+go through 'hole' only if they have the bag of Ferret Chow, he types:
+   @lock hole=Ferret Chow
+If he wants himself to be able to go in the hole, even if he doesn't have the
+Ferret Chow, he types:
+   @lock hole=Ferret Chow | me
+If he wants to lock everyone out except for himself and Murf if Murf has the bag
+of Ferret Chow, he types:
+   @lock hole=(*murf & Ferret Chow) | me
+You can get more and more complicated with locks this way.
+Igor is done building his home, and wants to set his home to it, so when he
+types 'home' he will go there instead of Limbo(#0RDLA). He goes in his house,
+and types:
+   @link me=here
+The program will respond with "Home set." Now Igor can go 'home', and QUIT
+and not worry about his inactive body cluttering up the landscape.
+
+Creating whole houses and adventures can be easy if you understand the way
+the @ commands work.
+When you build a room, it makes it neater if you have a very thorough
+description. Every thing listed in the description can be given a bogus
+exit (see entry) to detail the place. For example, here is the description 
+of a room built by Three.
+
+   Three's flat(#5400)
+   Red wall-to-wall carpeting covers the floor. A cushy brown leather
+   couch sits across from a wide-screen TV with a VCR and video disc
+   player stacked on top.  Escher prints hang on the walls, hilited by
+   track lighting. Papers protrude from a roll-top desk to one side,
+   adjoining an imposing stereo whose controls rival those of 747 cockpits.
+   The kitchen lies north, the foyer south, and the bedroom beyond a
+   short passage east.
+   Contents:
+   Flitterby Award for Comprehensive Building
+
+Now, you noticed the desk in the room. A 'look desk' will show:
+   Every drawer and cubby is overflowing with papers, envelopes, flyers,
+   leaflets, folders, booklets, binders, quick reference cards, and
+   other paper products. A Compaq luggable sits in a small canyon of
+   paper. Atop the desk stands a framed photo. Under the desk sits a
+   back stool.
+Now, since this was done with a exit to create a bogus command, you might
+try going through the exit, so you will get the fail message. A 'desk' will
+show:
+   You rummage thru the desk drawers, finding nothing of interest.
+Here is an examine of the bogus command, to show you how it was done (only
+the owner or a WIZARD can do an examine and get this output):
+   desk(#5395E)
+   Owner: Three  Key: Three(#5370PTF)&!Three(#5370PTF) Pennies: 0
+   Every drawer and cubby is overflowing with papers, envelopes, flyers,
+   leaflets, folders, booklets, binders, quick reference cards, and
+   other paper products. A Compaq luggable sits in a small canyon of
+   paper. Atop the desk stands a framed photo. Under the desk sits a
+   back stool.
+   Fail: You rummage thru the desk drawers, finding nothing of interest.
+   Ofail: rummages thru the desk drawers.
+   Destination: Three's flat(#5400R)
+
+In this way, a highly detailed room can be built, and greatly increase the
+atmosphere of the place. Take a walk around and look at the place first, 
+before deciding to build. Then sit down and think carefully about what you
+want to build. Careful planning has made several very interesting places.
+

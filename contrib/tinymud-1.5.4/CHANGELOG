@@ -1,0 +1,326 @@
+------------------------------------------------------------------------
+r55 | jlambert | 2005-12-11 08:39:04 -0500 (Sun, 11 Dec 2005) | 6 lines
+
+Removed MANIFEST.  
+Added os.c for gettimeofday.
+Applied release 1.5.4f changes.
+Updated Makefiles.
+
+
+------------------------------------------------------------------------
+r54 | jlambert | 2005-12-11 05:59:29 -0500 (Sun, 11 Dec 2005) | 8 lines
+
+Updated code to 1.54F.
+Copied oldinterface.c to interface.c
+Removed all concentrator code (conc.c and oldinterface.c)
+Removed comb.sed file.
+Updated os.h and Makefiles.
+
+
+
+------------------------------------------------------------------------
+r53 | jlambert | 2005-07-04 18:49:12 -0400 (Mon, 04 Jul 2005) | 1 line
+
+Changed dist target to pick up makefile.vc
+------------------------------------------------------------------------
+r52 | jlambert | 2005-07-04 18:45:40 -0400 (Mon, 04 Jul 2005) | 1 line
+
+Changed dist target to pick up makefile.vc
+------------------------------------------------------------------------
+r51 | jlambert | 2005-07-04 18:40:57 -0400 (Mon, 04 Jul 2005) | 3 lines
+
+Changes to compile for VC++ v7.1
+
+
+------------------------------------------------------------------------
+r50 | jlambert | 2005-01-15 09:34:04 -0500 (Sat, 15 Jan 2005) | 1 line
+
+Initial version of instalaltion notes.
+------------------------------------------------------------------------
+r49 | jlambert | 2005-01-15 09:33:28 -0500 (Sat, 15 Jan 2005) | 1 line
+
+Initial version of Microsoft VC++ 6.0 makefile.
+------------------------------------------------------------------------
+r48 | jlambert | 2005-01-15 09:25:52 -0500 (Sat, 15 Jan 2005) | 1 line
+
+Initial version of Digital Mars and LCC Makefiles.
+------------------------------------------------------------------------
+r47 | jlambert | 2005-01-15 09:25:10 -0500 (Sat, 15 Jan 2005) | 1 line
+
+Added sys/stat.h header to Linux section.
+------------------------------------------------------------------------
+r46 | jlambert | 2005-01-15 06:22:39 -0500 (Sat, 15 Jan 2005) | 4 lines
+
+Explicitly declared void parameters to functions.
+Removed cast of signal handler functions in signal calls.
+
+
+------------------------------------------------------------------------
+r45 | jlambert | 2005-01-15 06:20:32 -0500 (Sat, 15 Jan 2005) | 1 line
+
+Initialize local variable i to zero.  Warning from borland.
+------------------------------------------------------------------------
+r44 | jlambert | 2005-01-15 06:19:00 -0500 (Sat, 15 Jan 2005) | 1 line
+
+Initial version
+------------------------------------------------------------------------
+r43 | jlambert | 2005-01-15 06:18:36 -0500 (Sat, 15 Jan 2005) | 1 line
+
+Borland has index neither. Removed ifdef around index macro.
+------------------------------------------------------------------------
+r42 | jlambert | 2005-01-14 16:45:34 -0500 (Fri, 14 Jan 2005) | 1 line
+
+Added -O2 and -pipe to compiler flags. Remove double inclusion of game.c in CFILES.
+------------------------------------------------------------------------
+r41 | jlambert | 2005-01-14 16:44:16 -0500 (Fri, 14 Jan 2005) | 7 lines
+
+Added networking support for windows.
+NOTE: This code...netmud.con.exe will NOT operate correctly on Windows.
+There are notes with as to why. Nor is it really needed.  
+netmud.exe will handle 1024 connections and can be altered to 32767.
+See FD_SETSIZE macro in os.h
+
+
+------------------------------------------------------------------------
+r40 | jlambert | 2005-01-14 16:41:10 -0500 (Fri, 14 Jan 2005) | 4 lines
+
+Added and changed network code for windows support.
+Altered signal handling support for various systems.
+
+
+------------------------------------------------------------------------
+r39 | jlambert | 2005-01-14 16:39:44 -0500 (Fri, 14 Jan 2005) | 4 lines
+
+Network code needed for Windows added.
+Signal support for various systems altered.
+ 
+
+------------------------------------------------------------------------
+r38 | jlambert | 2005-01-14 16:37:25 -0500 (Fri, 14 Jan 2005) | 5 lines
+
+Macro to translate index() to strchr() added for VC.
+Added #ifdef logic to determine the max open filess on various systems.
+Redefined EINTR and EMFILE to WSA values for Windows.
+
+
+------------------------------------------------------------------------
+r37 | jlambert | 2005-01-14 16:34:55 -0500 (Fri, 14 Jan 2005) | 1 line
+
+Alarm signal handling code commented out for WIN32 and alarm timing code added.
+------------------------------------------------------------------------
+r36 | jlambert | 2005-01-13 21:45:45 -0500 (Thu, 13 Jan 2005) | 5 lines
+
+Added other compiler Makefiles to dist target.
+Updated conc.exe target to rely on object not source.
+Added netmud.conc and concentrate to OUTFILES.
+
+
+------------------------------------------------------------------------
+r35 | jlambert | 2005-01-13 21:11:39 -0500 (Thu, 13 Jan 2005) | 4 lines
+
+Removed all references to paths.c - source found in tinymud 1.4.1
+Added tinymud documentation to dist target.
+ 
+
+------------------------------------------------------------------------
+r34 | jlambert | 2005-01-13 20:57:32 -0500 (Thu, 13 Jan 2005) | 14 lines
+
+Replace system headers with os.h 
+Added externs.h header.
+Changed addrout to use struct in_addr instead of long.
+Added forward declaration for do_connect_msg.
+Change bailout, sigshutdown, and logsynch signal handlers to use signal() signature.
+Properly declared main and replaced exit() with return.
+Added platform dependent #ifdef exclusions for supported signals to set_signals.
+Change errno variable to use GETERROR macro in os.h
+Removed signal context informatio and code from all signal handlers.
+In gethostbyaddr a cast was added to 1st parameter.
+Changed print format specifiers with time_t values from %d to %ld.
+
+
+
+------------------------------------------------------------------------
+r33 | jlambert | 2005-01-13 20:50:08 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Replaced errno variable with GETERROR macro from os.h
+------------------------------------------------------------------------
+r32 | jlambert | 2005-01-13 20:46:12 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added stdarg.h header for all OS, added sys/resource.h and sys/wait.h for Linuxes
+------------------------------------------------------------------------
+r31 | jlambert | 2005-01-13 20:43:37 -0500 (Thu, 13 Jan 2005) | 4 lines
+
+Removed -DDETACH option from default compile.  
+DETACH will not compile yet.  Need to resolve ioctl(TIOCNOTTY) call.
+
+
+------------------------------------------------------------------------
+r30 | jlambert | 2005-01-13 20:39:45 -0500 (Thu, 13 Jan 2005) | 9 lines
+
+Added externs.h header.
+Changed signal handler functions to match signal() signature.
+Removed code that read signal context in signal handler functions.
+Added declaration for do_connect_msg.
+Changed return signature of start_port to void.
+Changed format specifiers for time values from %d to %ld.
+Fixed definition for file_date() to match declaration.
+
+
+------------------------------------------------------------------------
+r29 | jlambert | 2005-01-13 20:34:39 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added declarations for boot_off() and main_loop().
+------------------------------------------------------------------------
+r28 | jlambert | 2005-01-13 20:33:49 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added many declarations that were missing.
+------------------------------------------------------------------------
+r27 | jlambert | 2005-01-13 17:18:44 -0500 (Thu, 13 Jan 2005) | 4 lines
+
+Replaced system headers with os.h header.
+Removed prototype for index().
+
+
+------------------------------------------------------------------------
+r26 | jlambert | 2005-01-13 17:04:38 -0500 (Thu, 13 Jan 2005) | 3 lines
+
+Added externs.h header.  Correctly prototyped main and replaced exit with return.
+
+
+------------------------------------------------------------------------
+r25 | jlambert | 2005-01-13 17:02:26 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Replaced system headers with os.h header.
+------------------------------------------------------------------------
+r24 | jlambert | 2005-01-13 16:57:57 -0500 (Thu, 13 Jan 2005) | 5 lines
+
+Replaced system headers with os.h header.
+Changed return of alloc_string to non-const.
+Added externs.h header.
+
+
+------------------------------------------------------------------------
+r23 | jlambert | 2005-01-13 16:56:06 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added match.h header.
+------------------------------------------------------------------------
+r22 | jlambert | 2005-01-13 16:54:51 -0500 (Thu, 13 Jan 2005) | 7 lines
+
+Replaced system headers with os.h header.
+Added declarations for disconnect, panic, setup, connect_mud and mainloop and made void 
+ signatures explicit.
+Correctly defined main and added return.
+In mainloop, explicitly cast parameters in calls to gethostbyaddr and inet_ntoa.
+
+
+------------------------------------------------------------------------
+r21 | jlambert | 2005-01-13 16:36:47 -0500 (Thu, 13 Jan 2005) | 4 lines
+
+Added stdio.h for all os, added sys/param.h and arpa/inet.h to linux section.
+Defined RAND macro to call random for linuxes and rand for windows.
+
+
+------------------------------------------------------------------------
+r20 | jlambert | 2005-01-13 13:13:41 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Replaced system headers with os.h
+------------------------------------------------------------------------
+r19 | jlambert | 2005-01-13 13:07:30 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added os.h header.
+------------------------------------------------------------------------
+r18 | jlambert | 2005-01-13 13:05:06 -0500 (Thu, 13 Jan 2005) | 4 lines
+
+Replaced system headers with os.h
+Reversed order of static and const in locals in check_pronouns().
+
+
+------------------------------------------------------------------------
+r17 | jlambert | 2005-01-13 13:01:44 -0500 (Thu, 13 Jan 2005) | 6 lines
+
+Replaced system headers with os.h
+Added externs.h
+Changed main to have proper signature and replaced exit() with return.
+Fixed several printf() ststements with missing parameters.
+
+
+------------------------------------------------------------------------
+r16 | jlambert | 2005-01-13 12:58:59 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added os.h header.
+------------------------------------------------------------------------
+r15 | jlambert | 2005-01-13 12:57:33 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Replaced system headers with os.h
+------------------------------------------------------------------------
+r14 | jlambert | 2005-01-13 12:55:07 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added os.h header
+------------------------------------------------------------------------
+r13 | jlambert | 2005-01-13 12:53:13 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added os.h header
+------------------------------------------------------------------------
+r12 | jlambert | 2005-01-13 12:47:55 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added os.h, externs.h, interface.h headers and changed use of random() to RAND macro.
+------------------------------------------------------------------------
+r11 | jlambert | 2005-01-13 12:43:31 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added os.h header and changed use of random() to RAND macro.
+------------------------------------------------------------------------
+r10 | jlambert | 2005-01-13 12:41:04 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added os.h header and changed use of random() to RAND macro.
+------------------------------------------------------------------------
+r9 | jlambert | 2005-01-13 12:40:35 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Added os.h header and changed use of random() to RAND macro.
+------------------------------------------------------------------------
+r8 | jlambert | 2005-01-13 12:32:12 -0500 (Thu, 13 Jan 2005) | 1 line
+
+Replaced system includes with os.h header
+------------------------------------------------------------------------
+r7 | jlambert | 2005-01-13 12:29:58 -0500 (Thu, 13 Jan 2005) | 3 lines
+
+Added netdb.h and sys/ioctl.h to Linux section.
+
+
+------------------------------------------------------------------------
+r6 | jlambert | 2005-01-13 12:28:50 -0500 (Thu, 13 Jan 2005) | 4 lines
+
+Replaced system includes with os.h header.
+Changed main to use right signature and return instead of exit.
+
+
+------------------------------------------------------------------------
+r5 | jlambert | 2005-01-12 11:33:44 -0500 (Wed, 12 Jan 2005) | 5 lines
+
+Removed prototypes for ansi functions.
+Removed constness from char pointers in object structure.
+Removed constness from return signature of alloc_string.
+
+
+------------------------------------------------------------------------
+r4 | jlambert | 2005-01-12 11:31:52 -0500 (Wed, 12 Jan 2005) | 1 line
+
+Initial version of porting header
+------------------------------------------------------------------------
+r3 | jlambert | 2005-01-12 11:31:19 -0500 (Wed, 12 Jan 2005) | 5 lines
+
+Removed system includes and added os.h header instead.
+Updated main and others with proper return signatures.
+Replace exit in main with return.
+
+
+------------------------------------------------------------------------
+r2 | jlambert | 2005-01-12 11:13:44 -0500 (Wed, 12 Jan 2005) | 1 line
+
+Ran code through indent.
+------------------------------------------------------------------------
+r1 | jlambert | 2005-01-11 09:10:10 -0500 (Tue, 11 Jan 2005) | 3 lines
+
+Initial checkin
+
+
+------------------------------------------------------------------------

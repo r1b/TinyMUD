@@ -1,0 +1,969 @@
+\documentstyle[11pt,titlepage,makeidx,ragright]{article}
+
+\newcommand{\bs}{\char '134}	% backslash character for \tt font
+\newcommand{\ub}{\char '137}	% underbar character for \tt font
+\newcommand{\ua}{\char '136}	% up arrow character for \tt font
+\newcommand{\qt}{\char '175}	% quotes character for \tt font
+\newcommand{\tl}{\char '176}	% tilde character for \tt font
+\newcommand{\sh}{\char '043}	% sharp character for \tt font
+
+\newcommand{\tinymud}{{\small Tiny}{MUD}}
+\newcommand{\type}[1]{{\tt #1\/}}
+
+\newenvironment{simple}{\begin{list}%
+{\relax}%
+{\setlength{\labelwidth}{0pt}%
+ \setlength{\labelsep}{0pt}%
+ \setlength{\leftmargin}{0pt}%
+ \setlength{\listparindent}{0pt}}}%
+{\end{list}}
+
+%\newenvironment{simple}{\begin{trivlist}}{\end{trivlist}}
+
+%\newlength{\boxwidth}
+%\setlength{\boxwidth}{\textwidth}
+%\addtolength{\boxwidth}{-7pt}
+
+\newlength{\rulewidth}
+\setlength{\rulewidth}{\textwidth}
+%\divide\rulewidth by 3
+
+\newcommand{\dorule}{\begin{center}
+\rule{\rulewidth}{1pt}
+\end{center}}
+
+\makeindex
+
+\title{{\bf A brief guide to {\large\bf Tiny}MUD}}
+
+\author{Jennifer Stone (aka Chrysalis) \\
+{\tt jennifer@uokmax.ecn.uoknor.edu}
+\and
+Rusty C. Wright \\
+{\tt rusty@garnet.berkeley.edu}}
+
+\begin{document}
+
+% uncomment the commented lines if you want a more formal document
+% with a separate title page and table of contents.
+
+\ragright
+
+\pagenumbering{roman}
+
+\maketitle
+
+\tableofcontents
+\clearpage
+
+\pagenumbering{arabic}
+
+Much of this is from the {\tinymud} source code and the {\tt small.db}
+example.
+
+\section{Ordinary commands}
+\label{sec:ordinary-commands}
+
+\begin{simple}
+
+\item[]
+\begin{flushleft}
+{\tt drop} $<${\em object\/}$>$ \\
+{\tt throw} $<${\em object\/}$>$
+\index{drop@\type{drop}}
+\index{throw@\type{throw}}
+\end{flushleft}
+Drops the specified object.  $<${\em object\/}$>$ can be either a
+thing or exit.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt examine} $<${\em name\/}$>$ \\
+{\tt examine} {\tt \#}$<${\em number\/}$>$
+\index{examine@\type{examine}}
+\end{flushleft}
+Prints a detailed description of object specified by $<${\em
+name\/}$>$ or by $<${\em number\/}$>$ giving name, description, owner,
+keys, pennies, failure message, success message, others failure
+message, others success message, and exits.  The location will also be
+displayed if you control the object's location (that is, if it's not
+being carried by someone else or in a room you don't control).
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt get} $<${\em object\/}$>$ \\
+{\tt take} $<${\em object\/}$>$
+\index{get@\type{get}}
+\index{take@\type{take}}
+\end{flushleft}
+Gets the specified object.  $<${\em object\/}$>$ can be either a thing
+or exit.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt give} $<${\em player\/}$>$ \verb|=| $<${\em amount\/}$>$
+\index{give@\type{give}}
+\end{flushleft}
+Gives $<${\em player\/}$>$ the specified number of pennies.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt go} $<${\em direction\/}$>$ \\
+{\tt go home} \\
+{\tt move} $<${\em direction\/}$>$ \\
+{\tt move home}
+\index{go@\type{go}}
+\index{move@\type{move}}
+\index{home@\type{home}}
+\end{flushleft}
+
+Moves in the specified direction.  {\tt go home} is a special command
+that returns you to your home (initially Limbo).  If the direction is
+fully specified, the {\tt go} may be omitted.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt gripe} $<${\em message\/}$>$
+\index{gripe@\type{gripe}}
+\end{flushleft}
+Sends $<${\em message\/}$>$ to the system maintainer.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt help}
+\index{help@\type{help}}
+\end{flushleft}
+Prints a short help message.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt inventory}
+\index{inventory@\type{inventory}}
+\end{flushleft}
+Lists what you are carrying.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt kill} $<${\em player\/}$>$ $[$ \verb|=| $<${\em cost\/}$>$ $]$
+\index{kill@\type{kill}}
+\end{flushleft}
+Kills the specified player.  Killing costs either $<${\em cost\/}$>$
+pennies or 10 pennies, whichever is greater.  The probability of
+success is proportional to the cost.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt look} $<${\em object\/}$>$ \\
+{\tt read} $<${\em object\/}$>$
+\index{look@\type{look}}
+\index{read@\type{read}}
+\end{flushleft}
+$<${\em object\/}$>$ can be a room, thing, player, or direction.  Prints
+a description of $<${\em object\/}$>$.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt page} $<${\em player\/}$>$
+\index{page@\type{page}}
+\end{flushleft}
+Used to inform an active player that you are looking for them.  The
+targeted player will get a message telling them your name and
+location.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt rob} $<${\em player\/}$>$
+\index{rob@\type{rob}}
+\end{flushleft}
+Attempt to steal a penny from $<${\em player\/}$>$.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt say} $<${\em message\/}$>$ \\
+\verb|"|$<${\em message\/}$>$ \\
+\verb|:|$<${\em message\/}$>$
+\index{say@\type{say}}
+\index{""@\type{""}}
+\index{:@\type{:}}
+\end{flushleft}
+The first two forms display the $<${\em message\/}$>$ with the
+notification that you said it.  For example, if your player's name is
+Betty the other players in the same room will see
+\begin{flushleft}
+{\tt Betty says} ``$<${\em message\/}$>$''
+\end{flushleft}
+The third form {\sl poses} the message, preceded by your name, with no
+quotes, as in
+\begin{flushleft}
+{\tt Betty} $<${\em message\/}$>$
+\end{flushleft}
+For both the second and third forms, do not put a space after
+the double quotes or colon as it will be included in the message.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt score}
+\index{score@\type{score}}
+\end{flushleft}
+Prints how many pennies you have.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt whisper} $<${\em player\/}$>$ \verb|=| $<${\em message\/}$>$
+\index{whisper@\type{whisper}}
+\end{flushleft}
+$<${\em player\/}$>$ is presented with $<${\em message\/}$>$ saying
+that you whispered it.  The other players only see the message
+\begin{flushleft}
+{\tt Betty whispers something to} $<${\em player\/}$>$.
+\end{flushleft}
+
+\end{simple}
+
+\section{Commands for modifying the dungeon}
+\label{sec:commands-for-modifying-the-dungeon}
+
+\begin{simple}
+
+\item[]
+\begin{flushleft}
+{\tt @create\/} $<${\em name\/}$>$ $[$ \verb|=| $<${\em cost\/}$>$ $]$
+\index{create@\type{"@create}}
+\end{flushleft}
+Creates a thing with the specified name.  Creation costs either
+$<${\em cost\/}$>$ pennies or 10 pennies, whichever is greater.  The
+value of a thing is proportional to its cost.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @describe} $<${\em object\/}$>$ \verb|=| $<${\em description\/}$>$
+\index{describe@\type{"@describe}}
+\end{flushleft}
+$<${\em object\/}$>$ can be a room, thing, player, or direction.  Sets
+the description a player sees when they use the command {\tt look}
+$<${\em object\/}$>$.  If $<${\em object\/}$>$ is {\tt
+here}\index{here@\type{here}} it sets the description for the current
+room that is displayed when the room is entered.  If $<${\em
+object\/}$>$ is {\tt me}\index{me@\type{me}} it sets the description for
+your character.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @dig} $<${\em name\/}$>$
+\index{dig@\type{"@dig}}
+\end{flushleft}
+Creates a new room with the specified name, and prints the room's
+number.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @fail} $<${\em object\/}$>$ $[$ \verb|=| $<${\em message\/}$>$
+$]$
+\index{fail@\type{"@fail}}
+\end{flushleft}
+Without a message argument, clears the failure message on $<${\em
+object\/}$>$, otherwise sets it.  The failure message is printed when
+a player unsuccessfully attempts to use the object.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @find} $<${\em name\/}$>$
+\index{find@\type{"@find}}
+\end{flushleft}
+Prints the name and object number of every room, thing, or player that
+you control whose name matches $<${\em name\/}$>$.  Because the {\tt
+@find} command is computationally expensive, there is a small charge
+for using it.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @link} $<${\em direction\/}$>$ \verb|=| $<${\em room number\/}$>$ \\
+{\tt @link} $<${\em thing\/}$>$ \verb|=| $<${\em room number\/}$>$ \\
+{\tt @link} $<${\em room\/}$>$ \verb|=| $<${\em room number\/}$>$
+\index{link@\type{"@link}}
+\end{flushleft}
+In the first form links the exit specified by $<${\em direction\/}$>$
+to the room specified by $<${\em room number\/}$>$.  The exit must be
+unlinked, and you must own the target room if its
+\verb|link_ok|\index{linkok@\verb,link_ok,} attribute is not set.  If
+you don't already own the exit its ownership is transferred to you.
+The second form sets the home for $<${\em thing\/}$>$\index{home}.  If
+$<${\em thing\/}$>$ is {\tt me}\index{me@\type{me}} it sets your home.
+The third form sets the dropto; see section~\ref{sec:droptos} for an
+explanation of dropto's.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @lock} $<${\em object\/}$>$ \verb|=| $<${\em key\/}$>$
+\index{lock@\type{"@lock}}
+\end{flushleft}
+Sets a key (another object) for an object.  If $<${\em key\/}$>$
+starts with \verb|*| then it must be a player's name.  $<${\em
+key\/}$>$ can contain the Boolean operators \verb|!| (not or
+negation), \verb|&| (and), and \verb:|: (or), and use parentheses for
+grouping.
+
+In order to use $<${\em object\/}$>$ you must satisfy the requirements
+of $<${\em key\/}$>$.  In the simplest case you must simply have
+$<${\em key\/}$>$.  If $<${\em key\/}$>$ is preceded by \verb|!| then
+you must not have $<${\em key\/}$>$ in order to use $<${\em
+object\/}$>$.  See section~\ref{sec:lock-key-boolean-examples} for
+more complicated examples.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @name} $<${\em object\/}$>$ \verb|=| $<${\em name\/}$>$ \\
+{\tt @name} $<${\em player\/}$>$ \verb|=| $<${\em name\/}$>$ $<${\em
+password\/}$>$
+\index{name@\type{"@name}}
+\end{flushleft}
+Changes the name of the specified object.  This can also be used to
+specify a new direction list for an exit (see for example {\tt
+@open\/}).  For a player, it requires the player's password.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @ofail} $<${\em object\/}$>$ $[$ \verb|=| $<${\em message\/}$>$
+$]$
+\index{ofail@\type{"@ofail}}
+\end{flushleft}
+Without a message argument, clears the others failure message on
+$<${\em object\/}$>$, otherwise sets it.  The others failure message,
+prefixed by the player's name, is shown to others when the player
+fails to use $<${\em object\/}$>$.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @open} $<${\em direction\/}$>$ $[$ {\tt;} $<${\em other-dir\/}$>$
+$]*$ $[$ {\tt =} $<${\em destination\/}$>$ $]$
+\index{open@\type{"@open}}
+\end{flushleft}
+Creates an unlinked exit in the specified direction(s).  You can also
+specify an exit to link the exit to.  Once created, you (or any other
+player) may use the {\tt @link} command to specify the room to which
+the exit leads.  See also {\tt @name}.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @osuccess} $<${\em object\/}$>$ $[$ \verb|=| $<${\em
+message\/}$>$ $]$
+\index{osuccess@\type{"@osuccess}}
+\end{flushleft}
+Without a message argument, clears the others success message on
+$<${\em object\/}$>$, otherwise sets it.  The others success message,
+prefixed by the player's name, is shown to others when the player
+successfully uses $<${\em object\/}$>$.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @password} $<${\em old\/}$>$ \verb|=| $<${\em new\/}$>$
+\index{password@\type{"@password}}
+\end{flushleft}
+Sets a new password; you must specify your old password to verify your
+identity.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @set} $<${\em object\/}$>$ \verb|=| $<${\em flag\/}$>$ \\
+{\tt @set} $<${\em object\/}$>$ \verb|=| {\tt !}$<${\em flag\/}$>$
+\index{set@\type{"@set}}
+\end{flushleft}
+Sets (first form) or resets (second form) $<${\em flag\/}$>$ on
+$<${\em object\/}$>$.  The current flags are \verb|dark|,
+\verb|link_ok|, \verb|sticky|, \verb|temple|, and \verb|wizard|.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @success} $<${\em object\/}$>$ \verb|=| $<${\em message\/}$>$
+\index{success@\type{"@success}}
+\end{flushleft}
+Without a message argument, clears the success message on $<${\em
+object\/}$>$, otherwise sets it.  The success message is printed when
+a player successfully uses $<${\em object\/}$>$.  Without $<${\em
+message}$>$ it clears the success message.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @teleport} $<${\em object\/}$>$ {\tt =} $<${\em destination\/}$>$
+\index{teleport@\type{"@teleport}}
+\end{flushleft}
+Teleports the object to the specified destination.  You must either
+control the object or it's current location, and you must be able to
+link to the destination. You can only teleport objects from room to
+room, not into or out of someone's hand.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @unlink} $<${\em direction\/}$>$
+\index{unlink@\type{"@unlink}}
+\end{flushleft}
+Removes the link on the exit in the specified $<${\em direction\/}$>$.
+You must own the exit.  The exit may then be relinked by any player
+using the {\tt @link} command and ownership of the exit transfers to
+that player.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @unlock} $<${\em object\/}$>$
+\index{unlock@\type{"@unlock}}
+\end{flushleft}
+Removes the lock on an object.
+
+\end{simple}
+
+\section{Miscellaneous commands}
+\label{sec:miscellaneous-commands}
+
+\begin{simple}
+
+\item[]
+\begin{flushleft}
+{\tt @stats}
+\index{stats@\type{"@stats}}
+Shows current total of players, rooms, objects, exits.
+\end{flushleft}
+
+\end{simple}
+
+\section{Money}
+\label{sec:money}
+
+Some actions have an associated cost:
+\begin{center}
+\begin{tabular}{|l|p{4in}|}
+\hline
+\multicolumn{1}{|c|}{{\bf Action}} &
+\multicolumn{1}{c|}{{\bf Cost}} \\
+\hline
+\hline
+\hline
+{\tt kill} & 10 pennies or more \\
+\hline
+{\tt page} & 1 penny \\
+\hline
+{\tt @open} & 1 penny \\
+\hline
+{\tt @dig} & 10 pennies \\
+\hline
+{\tt @create} & 10 pennies (or more) \\
+\hline
+{\tt @link} & 1 penny, plus 1 penny to the previous owner if you
+didn't already own the exit. \\
+\hline
+\end{tabular}
+\index{kill@\type{kill}}
+\index{page@\type{page}}
+\index{open@\type{"@open}}
+\index{dig@\type{"@dig}}
+\index{create@\type{"@create}}
+\index{link@\type{"@link}}
+\end{center}
+
+You get money by finding pennies, getting killed, having someone give
+you money, or by sacrificing a thing.  The sacrifice value of a thing
+is $(\mbox{\rm cost of the thing} / 5 ) - 1$.
+
+\section{TinyMUD concepts}
+\label{sec:tinymud-concepts}
+
+An {\em object} is either a player, room, thing, or exit.
+
+In addition to the commands listed above there are some built in words
+in {\tinymud}; {\tt me}\index{me@\type{me}} and {\tt
+here}\index{here@\type{here}}.  {\tt me} refers to your character or
+player, and {\tt here} refers to the room you are in.  For example,
+you can use the \verb|@describe| command to give yourself a
+description; as another example, in order to prevent yourself from
+being robbed use {\tt @lock me = me\/}.
+
+\subsection{Success and the lack thereof}
+\label{sec:success-and-the-lack-thereof}
+
+When you can {\tt take} a thing, use an exit, or rob a player you are
+successfull in using that object.  The converse is true for failure.
+The {\tt @success\/}, {\tt @osuccess\/}, {\tt @fail\/}, and {\tt
+@ofail} commands set the success and failure messages on objects.%
+\index{success@\type{"@success}}%
+\index{osuccess@\type{"@osuccess}}%
+\index{fail@\type{"@fail}}%
+\index{ofail@\type{"@ofail}}
+
+\subsection{Object strings}
+\label{sec:object-strings}
+
+Every object has six strings:
+\begin{enumerate}
+\item
+Name.  This is what you use with {\tt drop\/}, {\tt examine\/}, {\tt
+get\/}, and so on.  You can also use the object's number (for example,
+when two objects have the same name).
+
+\item
+Description.  This is what is given when you use the {\tt look}
+command.
+
+\item
+Success message.  This is what you see when you successfully use the
+object.
+
+\item
+Others success message.  This is what the other players see when you
+successfully use the object.
+
+\item
+Failure message.  This is what you see when you fail to use an object.
+
+\item
+Others failure message.  This is what the other players see when you
+fail to use an object.
+\end{enumerate}
+The maximum length of each string is 512 characters.
+
+\subsection{Object properties}
+\label{sec:object-properties}
+
+As listed in the \verb|@set| command, objects can have any of the
+following properties:
+\begin{description}
+\item[{\tt dark}]
+\index{dark@\type{dark}}
+When a room has its {\tt dark} flag set you can't see things in it
+with the {\tt look} command.  When a thing or player has its {\tt
+dark} flag set it can't be seen.  Only a wizard can set the {\tt dark}
+flag on a thing or player.  Setting the {\tt dark} flag on exits
+currently has no effect.
+
+\item[{\tt link{\ub}ok}]
+\index{linkok@\verb,link_ok,}
+You can link to a room if you control it, or if the room has its
+\verb|link_ok| flag set.  Being able to link to a room means that you
+can set the homes\index{home} of things (or yourself) to that room,
+and you can set the destination of exits to that room.  See also the
+{\tt @link} command for additional information on linking and
+section~\ref{sec:droptos} for droptos.  Setting the
+\verb|link_ok| flag on players, things, and exits currently has no
+effect.
+
+\item[{\tt sticky}]
+\index{sticky@\type{sticky}}
+When an object that has its {\tt sticky} flag set is dropped it
+immediately goes home.  When a room has its {\tt sticky} flag set its
+dropto is delayed until the last person leaves the room.  Setting the
+{\tt sticky} flag on players and exits currently has no effect.
+
+\item[{\tt temple}]
+\index{temple@\type{temple}}
+When a room has its {\tt temple} flag set you can sacrifice things
+there and receive pennies for your sacrifices.  (See
+section~\ref{sec:money} for how many pennies you receive for your
+sacrifices.)  Only a wizard can set this flag.  Setting this flag on
+players, things, and exits currently has no effect.
+
+\item[{\tt wizard}]
+\index{wizard@\type{wizard}}
+When a player has its {\tt wizard} flag set they are a wizard.  Only a
+wizard can set this flag.  Setting this flag on things, rooms, and
+exits currently has no effect.
+
+\end{description}
+
+The flags {\tt player\/}, {\tt room\/}, and {\tt exit} are set
+automatically when a player, room, or exit is created.  They cannot be
+subsequently unset or set with the \verb|@set| command.
+
+\subsection{Control}
+\label{sec:control}
+
+There are three rules for determining control:
+\begin{enumerate}
+\item
+You can control anything you own.
+\item
+A wizard can control anything.
+\item\label{item:unlinked-exit}
+Anybody can control an unlinked exit (even if it is locked).
+\end{enumerate}
+Builders should watch out for item~\ref{item:unlinked-exit}.
+
+\subsection{Dropto's}
+\label{sec:droptos}
+
+\index{droptos}
+When the {\tt @link} command is used on a room, it sets a dropto
+location for that room.  Any thing dropped in the room (if it is not
+{\tt sticky\/}; see above) will go to that location.  If the room has
+its {\tt sticky\/} flag set the effect of the dropto will be delayed
+until the last player leaves the room.  The special location {\tt
+home} may be used as a dropto, as in {\tt @link here = home\/}; in
+that case things dropped in the room will go to their
+homes\index{home@\type{home}}.  To remove the dropto on a room go into
+that room and use {\tt @unlink here\/}\index{here@\type{here}}.
+
+\subsection{Homes}
+\label{sec:homes}
+
+\index{home}
+Every thing or player has a home.  For things, this is the location
+the thing returns to when sacrificed, when a player carrying it goes
+home, or when (if its {\tt sticky\/} flag is set) it is dropped.  For
+players, this is where the player goes when they issue the {\tt home}
+command.  Homes may be set using the {\tt @link} command; for example,
+{\tt @link donut =} $<${\em room-number\/}$>$ or {\tt @link me =}
+$<${\em room-number\/}$>$\index{me@\type{me}}.  Exits may also be
+linked to the special location {\tt home\/}; for example, {\tt @link
+north = home\/}\index{home@\type{home}}.
+
+\subsection{Recycling}
+\label{sec:recycling}
+
+Nothing can be destroyed in {\tinymud}, but it is possible to recycle
+just about anything.  The {\tt @name} command can be used to rename
+objects, making it easy to turn a silk purse into a sow's ear or vice
+versa.  Extra exits can be unlinked and picked up by their owner using
+the {\tt get} command, and dropped like things using the {\tt drop}
+command in any room controlled by the dropper.
+
+\subsection{Being killed}
+\label{sec:being-killed}
+
+When you are killed you return to your home and any items you were
+carrying return to their homes.  As a consolation you receive 50
+pennies from the {\tinymud} Total Life Indemnity insurance
+company.
+
+\section{Examples}
+\label{sec:examples}
+
+Here we present examples to demonstrate some of the features of
+{\tinymud}.
+
+\subsection{Success and failure messages}
+\label{sec:success-and-failure-messages}
+
+Success and failure messages are fairly straightforward.  Just
+remember that for the messages set with {\tt
+@osuccess}\index{osuccess@\type{"@osuccess}} and {\tt
+@ofail}\index{ofail@\type{"@ofail}} the player's name is prefixed onto
+the message when it is printed, while the messages set with {\tt
+@success}\index{success@\type{"@success}} and {\tt
+@fail}\index{fail@\type{"@fail}} are printed as-is.
+
+Previously we saw that you can use {\tt say}, \verb|"|, and \verb|:|
+to display messages.  An older method for posing non sequiturs is to
+set the others success message on yourself and then rob yourself.  For
+example, if your character is Betty and you do
+\index{say@\type{say}}
+\index{""@\type{""}}
+\index{:@\type{:}}
+\begin{verbatim}
+@osuccess me = starts picking her nose.
+rob me
+\end{verbatim}
+on your screen you'll see
+\begin{verbatim}
+You stole a penny.
+Betty stole one of your pennies!
+\end{verbatim}
+while the other players will see
+\begin{verbatim}
+Betty starts picking her nose.
+\end{verbatim}
+An easier way to accomplish this is to simply do
+\begin{verbatim}
+:starts picking her nose.
+\end{verbatim}
+then both you and the others see
+\begin{verbatim}
+Betty starts picking her nose.
+\end{verbatim}
+When using \verb|"| and \verb|:| don't follow them with a space
+because it will be included in the output; put the message right up
+against the quotes or colon.
+
+\subsection{Making your home}
+\label{sec:making-your-home}
+
+\index{home}
+The minimal steps for making your home are
+\begin{enumerate}
+\item
+Make the room for your home with the {\tt @dig} command.  Write down
+the room number in case the following step takes a long time.
+
+\item
+\label{item:exit}
+Make or acquire an exit.  In order to use the {\tt @open} command you
+must own the room that you are doing the {\tt @open} in.  The
+alternative is to find a room with an exit that isn't linked and use
+it.
+
+\item
+Make a link to your home.  Once you've made or found an unlinked exit
+simply use the {\tt @link} command to link the exit to your room.
+
+\item
+\label{item:exit-room}
+Find a room to which you can make a link in order to have an exit from
+your room (this is a room with the \verb|link_ok| flag set).  For the
+sake of example we'll pretend the number of this room is 711; we'll be
+using it in step~\ref{item:exit-link}.  Without this you'd be able to
+go to your home but you wouldn't have any way to get out of it.
+
+\item
+Set the link from you to your home.  Go into your room and do
+\index{here@\type{here}}
+\index{link@\type{"@link}}
+\begin{verbatim}
+@link me = here
+\end{verbatim}
+
+\item
+\label{item:exit-link}
+Make the exit and link it to the destination
+\begin{verbatim}
+@open out
+@link out = #711
+\end{verbatim}
+(The \verb|#| isn't mandatory.)
+\end{enumerate}
+
+Of course there are probably various details that you would want to
+take care of in addition to the above steps.  For example, if you're
+antisocial and want to prevent other people from using your home room
+you'd do
+\index{lock@\type{"@lock}}
+\begin{verbatim}
+@lock down = me
+\end{verbatim}
+assuming that {\tt down} is the exit you made in step~\ref{item:exit}.
+Along a similar vein you might not want other people linking to your
+room in which case you'd turn off the \verb|link_ok| flag on your
+room.  You might also set the description of your home room.  If you
+own the exit you could also set the success, others success, fail, and
+others fail messages on the exit to your home.  Without the
+descriptions places and things are boring and uninteresting.
+
+\subsection{Lock key boolean examples}
+\label{sec:lock-key-boolean-examples}
+
+When using the {\tt @lock} command the key is either another object or
+some boolean combination of other objects.  If the key starts with a
+\verb|*| then that object must be a player.
+
+For example, if a room has a direction {\tt out} and you want to
+prevent players from carrying the object {\tt xyz} when they go out,
+you would use
+\begin{verbatim}
+@lock out = !xyz
+\end{verbatim}
+or if you want to prevent the player Julia from using the {\tt out}
+exit you would use
+\begin{verbatim}
+@lock out = !*Julia
+\end{verbatim}
+If you want to prevent only Julia from going out with {\tt xyz} you
+would use
+\begin{verbatim}
+@lock out = ( *Julia & !xyz )
+\end{verbatim}
+
+\subsection{Ersatz commands}
+\label{sec:ersatz-commands}
+
+You can make new commands by making an exit and then locking it to
+something impossible to have and then assigning the failure and others
+failure messages to it.  For example, assume the following commands
+have been used
+\begin{verbatim}
+@open eat
+@link eat = here
+@lock eat = something_impossible
+@fail eat = You try to eat but only gag
+@ofail eat = tries to eat but instead gags
+\end{verbatim}
+Then when you use the command {\tt eat} the others in the room will
+see {\tt Betty tries to eat but instead gags} and you'll see {\tt You
+try to eat but only gag\/}.
+
+Note that this ``new command'' will only work in the room that you
+made it in.
+
+\clearpage
+
+\part*{Appendix}
+
+\appendix
+
+\section{Wizard commands}
+\label{sec:wizard-commands}
+
+\begin{simple}
+
+\item[]
+\begin{flushleft}
+{\tt @chown} $<${\em object\/}$>$ \verb|=| $<${\em player\/}$>$
+\index{chown@\type{"@chown}}
+\end{flushleft}
+Changes the ownership of $<${\em object\/}$>$ to $<${\em player\/}$>$.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @dump}
+\index{dump@\type{"@dump}}
+\end{flushleft}
+Forces a dump of the database.  This command isn't really necessary
+since {\tt @shutdown} does one as well as the regular periodic dumps.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt examine} $<${\em name\/}$>$ \\
+{\tt examine} {\tt \#}$<${\em number\/}$>$
+\index{examine@\type{examine}}
+\end{flushleft}
+Print a detailed description of object specified by $<${\em name\/}$>$
+or by $<${\em number\/}$>$.  All six strings listed in
+section~\ref{sec:object-strings} are printed.
+
+When $<${\em name\/}$>$ is a room or {\tt
+here}\index{here@\type{here}} it lists the owner, key, number of
+pennies, the description, contents, and exits.  When $<${\em
+name\/}$>$ is a direction lists the direction number, owner, key,
+pennies, and destination.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @force} $<${\em victim\/}$>$ \verb|=| $<${\em command\/}$>$
+\index{force@\type{"@force}}
+\end{flushleft}
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @newpassword} $<${\em player\/}$>$ \verb|=| $<${\em
+password\/}$>$
+\index{newpassword@\type{"@newpassword}}
+\end{flushleft}
+Changes the password for $<${\em player\/}$>$.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @shutdown}
+\index{shutdown@\type{"@shutdown}}
+\end{flushleft}
+Shuts down the {\tinymud} server.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @stats}
+\index{stats@\type{"@stats}}
+\end{flushleft}
+Lists the total number of objects, which is the sum of the rooms,
+exits, things, and players, giving the count for each one.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @teleport} $[$ $<${\em victim\/}$>$ \verb|=| $]$ $<${\em
+destination\/}$>$
+\index{teleport@\type{"@teleport}}
+\end{flushleft}
+Teleports the object to the specified destination.  Object can also be
+{\tt me\/}.\index{me@\type{me}}
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @toad} $<${\em player\/}$>$
+\index{toad@\type{"@toad}}
+\end{flushleft}
+Turns $<${\em player\/}$>$ into an object.
+
+\dorule
+
+\item[]
+\begin{flushleft}
+{\tt @wall} $<${\em message\/}$>$
+\index{wall@\type{"@wall}}
+\end{flushleft}
+Send $<${\em message\/}$>$ to all players.
+
+\end{simple}
+
+\addcontentsline{toc}{part}{Index}
+
+\printindex
+
+\end{document}
